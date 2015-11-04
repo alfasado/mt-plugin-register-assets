@@ -1,0 +1,63 @@
+<mt:setvarblock name="html_title"><__trans phrase="Register Assets"></mt:setvarblock>
+<mt:setvarblock name="page_title"><__trans phrase="Register Assets"></mt:setvarblock>
+
+<mt:setvarblock name="system_msg">
+    <mt:if name="queue_saved">
+        <mtapp:statusmsg
+           id="saved"
+            class="success">
+            <__trans phrase="File uploaded and RegisterAssets worker added to queue.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="saved">
+        <mtapp:statusmsg
+           id="saved"
+            class="success"
+            rebuild="all">
+            <__trans phrase="Your changes have been saved.">
+            <mt:if name="template_count">
+                <a href="<mt:var name="script_url">?__mode=list_template&blog_id=<mt:var name="blog_id">" target="_blank">
+            </mt:if>
+            <__trans phrase="[_1] templates" params="<mt:var name="template_count">">
+            <mt:if name="template_count">
+                </a>
+            </mt:if>
+            <__trans phrase=" and ">
+            <mt:if name="asset_count">
+                <a href="<mt:var name="script_url">?__mode=list&_type=asset&blog_id=<mt:var name="blog_id">" target="_blank">
+            </mt:if>
+            <__trans phrase="[_1] assets" params="<mt:var name="asset_count">">
+            <mt:if name="asset_count">
+                </a>
+            </mt:if>
+            <__trans phrase="are registered.">
+        </mtapp:statusmsg>
+    </mt:if>
+</mt:setvarblock>
+
+<mt:include name="include/header.tmpl">
+
+<h2><__trans phrase="Register Assets"></h2>
+
+<p><__trans phrase="Upload Common assets and index templates from ZIP file."></p>
+
+<form method="post" action="<mt:var name="script_url">" id="upload_common_assets" enctype="multipart/form-data">
+    <input type="hidden" name="__mode" value="upload_common_assets" />
+    <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+    <input type="hidden" name="blog_id" value="<mt:var name="blog_id">" />
+    <input type="hidden" name="save_revision" value="1" />
+<div style="margin-bottom:20px">
+    <input type="file" name="file" />
+</div>
+    <button
+        onclick="
+        if ( confirm( '<__trans phrase="Are you sure you want to register common assets?">' ) ) {
+            return true;
+        }
+        return false;
+        "
+        class="save action primary-button primary button"
+        ><__trans phrase="Register Assets"></button>
+</form>
+
+<mt:include name="include/footer.tmpl">

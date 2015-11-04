@@ -1,0 +1,43 @@
+name: Register Assets
+id:   RegisterAssets
+key:  registerassets
+version: 0.1
+author_name: Alfasado Inc.
+author_link: http://alfasado.net/
+description: <__trans phrase="Upload Common assets and index templates from ZIP file.">
+l10n_class: RegisterAssets::L10N
+config_settings:
+    RegisterTemplateExtensions:
+        default: css,js,html,php
+        updatable: 1
+    RegisterAssetExtensions:
+        default: jpeg,jpg,gif,png
+        updatable: 1
+    RegisterAssetAddTags:
+        default: '@common'
+        updatable: 1
+    RegisterTemplateBuildType:
+        default: 2
+        updatable: 1
+    RegisterAssetsByQueue:
+        default: 0
+        updatable: 1
+applications:
+    cms:
+        menus:
+            asset:upload_common_assets:
+                label: 'Register Assets'
+                mode: upload_common_assets
+                order: '5000'
+                view:
+                    - website
+                    - blog
+                condition: $registerassets::RegisterAssets::CMS::_registercommon_contition
+        methods:
+            upload_common_assets:
+                code: $registerassets::RegisterAssets::CMS::_app_cms_upload_common_assets
+                requires_login: '1'
+task_workers:
+    register_assets_by_queue:
+        label: Register Assets
+        class: 'RegisterAssets::Worker::Register'
