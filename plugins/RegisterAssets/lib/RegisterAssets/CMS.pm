@@ -12,7 +12,7 @@ use MT::TheSchwartz;
 use TheSchwartz::Job;
 use MT::Serialize;
 
-sub _registercommon_contition {
+sub _registercommon_condition {
     my $app = MT->instance;
     my $user = $app->user;
     my $admin = 'can_administer_blog';
@@ -26,7 +26,7 @@ sub _registercommon_contition {
 
 sub _app_cms_upload_common_assets {
     my $app = shift;
-    if (! _registercommon_contition( $app ) ) {
+    if (! _registercommon_condition( $app ) ) {
         return $app->trans_error( 'Permission denied.' );
     }
     my $blog = $app->blog;
@@ -42,6 +42,9 @@ sub _app_cms_upload_common_assets {
                     return $app->trans_error( 'Permission denied.' );
                 }
                 my $temp = _upload( $app, 'file' );
+                if ( ref $temp && $temp->{ error } ) {
+                    return $app->trans_error( $temp->{ error } );
+                }
                 if ( $temp !~ /\.zip$/i ) {
                     return $app->trans_error( 'Invalid request.' );
                 }
@@ -75,6 +78,7 @@ sub _app_cms_upload_common_assets {
             }
         }
     }
+    $param{ screen_group } = 'asset';
     my $tmpl = File::Spec->catfile( $component->path, 'tmpl', 'import.tmpl' );
     return $app->build_page( $tmpl, \%param );
 }
@@ -240,6 +244,8 @@ sub _register_assets {
             }
         }
     }
+    $fmgr->delete( $temp );
+    rmdir( File::Basename::dirname( $temp ) );
     my $result = { saved => $saved,
                    template_count => $template_count,
                    asset_count => $asset_count };
@@ -322,7 +328,7 @@ sub _upload {
     my $file = $q->upload( $name );
     my $size = ( -s $file );
     if ( $limit < $size ) {
-        $errors->{ error } = MT->trans_error( 'The file you uploaded is too large.' );
+        $errors->{ error } = 'The file you uploaded is too large.';
         return $errors;
     }
     my $out = File::Spec->catfile( $dir, File::Basename::basename( $file ) );

@@ -32,7 +32,7 @@ applications:
                 view:
                     - website
                     - blog
-                condition: $registerassets::RegisterAssets::CMS::_registercommon_contition
+                condition: $registerassets::RegisterAssets::CMS::_registercommon_condition
         methods:
             upload_common_assets:
                 code: $registerassets::RegisterAssets::CMS::_app_cms_upload_common_assets
